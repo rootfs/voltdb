@@ -984,15 +984,13 @@ SHAREDLIB_JNIEXPORT jboolean JNICALL Java_org_voltdb_jni_ExecutionEngine_nativeA
     VOLT_DEBUG("nativeActivateCopyOnWriteContext in C++ called");
     VoltDBEngine *engine = castToEngine(engine_ptr);
     Topend *topend = static_cast<JNITopend*>(engine->getTopend())->updateJNIEnv(env);
-    // deserialize predicates.
-    jsize length = env->GetArrayLength(indexName);
-    jbyte *bytes = env->GetByteArrayElements(indexName, NULL);
-    ReferenceSerializeInputBE serialize_in(bytes, length);
+    jbyte *indexChars = env->GetByteArrayElements( indexName, NULL);
+    std::string indexString(reinterpret_cast<char*>(indexChars), env->GetArrayLength(indexName));
 
     try {
         try {
             voltdb::TableStreamType cowType = static_cast<voltdb::TableStreamType>(type);
-            bool success = engine->activateCopyOnWriteContext(tableId, cowType, serialize_in);
+            bool success = engine->activateCopyOnWriteContext(tableId, cowType, indexString);
             return success;
         } catch (SerializableEEException &e) {
             engine->resetReusedResultOutputBuffer();

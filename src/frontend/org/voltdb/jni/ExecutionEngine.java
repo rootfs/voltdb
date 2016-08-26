@@ -507,7 +507,7 @@ public abstract class ExecutionEngine implements FastDeserializer.Deserializatio
      * Interface frontend invokes to communicate to CPP execution engine.
      */
     public abstract boolean activateCopyOnWriteContext(final int tableId,
-            byte[] indexName, TableStreamType type);
+            String indexName, TableStreamType type);
 
     public abstract boolean activateTableStream(final int tableId,
                                                 TableStreamType type,

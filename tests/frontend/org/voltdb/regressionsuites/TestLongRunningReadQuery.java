@@ -93,7 +93,8 @@ public class TestLongRunningReadQuery extends RegressionSuite {
             return;
         int keyIdx = m_random.nextInt(availableKeys.get(tableName).size());
         String sql = "update " + tableName + " set " + tableName + ".col1 = " + m_random.nextInt()
-            + "where " + tableName + ".id = " + availableKeys.get(tableName).get(keyIdx);
+            + " where " + tableName + ".id = " + availableKeys.get(tableName).get(keyIdx);
+        System.out.println(sql);
         client.callProcedure("@AdHoc", sql);
         m_updateCount++;
     }
@@ -101,6 +102,7 @@ public class TestLongRunningReadQuery extends RegressionSuite {
     private void doRandomInsert(Client client, String tableName) throws NoConnectionsException, IOException, ProcCallException {
 
         String sql = "insert into " + tableName + " values " + getTupleStringFromPrimaryKey(m_primaryKeyId);
+        System.out.println(sql);
         availableKeys.get(tableName).add(m_primaryKeyId);
         client.callProcedure("@AdHoc",sql);
         m_primaryKeyId++;
@@ -112,6 +114,7 @@ public class TestLongRunningReadQuery extends RegressionSuite {
             return;
         int keyIdx = m_random.nextInt(availableKeys.get(tableName).size());
         String sql = "delete from " + tableName + " where " + tableName + ".id = " + availableKeys.get(tableName).get(keyIdx);
+        System.out.println(sql);
         availableKeys.get(tableName).remove(keyIdx);
         client.callProcedure("@AdHoc",sql);
         m_deleteCount++;
@@ -207,6 +210,8 @@ public class TestLongRunningReadQuery extends RegressionSuite {
         }
         //System.out.println(initTableSize + " " + m_insertCount + " " + m_deleteCount);
         VoltTable vt = client.callProcedure("@AdHoc",sql).getResults()[0];
+        System.out.println(vt.toString());
+        System.out.println(initTableSize + " " + m_insertCount + " " + m_deleteCount);
         assertEquals(initTableSize + m_insertCount - m_deleteCount,vt.getRowCount());
         assertTrue(m_insertCount > 0 || m_deleteCount > 0 || m_updateCount > 0);
     }
@@ -228,7 +233,7 @@ public class TestLongRunningReadQuery extends RegressionSuite {
         assertEquals(initTableSize + m_insertCount - m_deleteCount,vt.getRowCount());
     }
     
-    public void subtest3Index(Client client) throws IOException, ProcCallException {
+    public void subtest3Index(Client client) throws IOException, ProcCallException, InterruptedException {
         System.out.println("subtest3Index...");
         String sql;
         m_receivedResponse = false;
@@ -237,7 +242,8 @@ public class TestLongRunningReadQuery extends RegressionSuite {
         executeLRR(client,sql);
         while (!m_receivedResponse) {
             // Do random ad hoc queries until the long running read returns
-            doRandomTableManipulation(client, "R1");
+            //doRandomTableManipulation(client, "R1");
+        	Thread.sleep(1000);
 
         }
         //System.out.println(initTableSize + " " + m_insertCount + " " + m_deleteCount);
@@ -272,6 +278,7 @@ public class TestLongRunningReadQuery extends RegressionSuite {
                 + ", COL7 INT "
                 + ", COL8 INT "
                 + ", COL9 INT "
+                + ", PRIMARY KEY (ID)"
                 + ");"
                 + ""
                 + "CREATE TABLE R2 ( "

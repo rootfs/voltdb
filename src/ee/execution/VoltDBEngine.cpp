@@ -511,7 +511,7 @@ int VoltDBEngine::executePlanFragment(int64_t planfragmentId,
             TempTableLimits limits = m_currExecutorVec->limits();
             limits.restoreSuspendedTransactionLimits(m_savedContext->m_currMemoryInBytes,
                     m_savedContext->m_peakMemoryInBytes);
-            m_executorContext->restorePausedTables(0,m_savedContext->m_executedCtr, m_savedContext->m_tmpOutputTable);
+            m_executorContext->restoreSuspendedExecutor(0,m_savedContext->m_executedCtr, m_savedContext->m_tmpOutputTable);
         }
 
         // Launch the target plan through its top-most executor list.
@@ -1655,7 +1655,7 @@ void VoltDBEngine::updateExecutorContextUndoQuantumForTest()
 bool VoltDBEngine::activateCopyOnWriteContext(
         const CatalogId tableId,
         const TableStreamType cowType,
-		ReferenceSerializeInputBE &serializeIn) {
+		std::string indexName) {
     Table* found = getTable(tableId);
     if (! found) {
         return false;
@@ -1667,8 +1667,10 @@ bool VoltDBEngine::activateCopyOnWriteContext(
         return false;
     }
 
+    std::cout << "green" << std::endl;
+
     // Crank up the necessary persistent table streaming mechanism(s).
-    std::string indexName = serializeIn.readTextString();
+    std::cout << "eggs" << std::endl;
     if (!table->activateCopyOnWriteContext(cowType, m_partitionId, tableId, indexName)) {
         return false;
     }

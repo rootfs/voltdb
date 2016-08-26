@@ -167,6 +167,7 @@ public:
         // Any active stream can reject freeing the tuple.
         BOOST_FOREACH(StreamPtr &streamPtr, m_streams) {
             assert(streamPtr != NULL);
+            std::cout << "notifyTupleDelete " << streamPtr->m_streamType << std::endl;
             freeable = streamPtr->m_context->notifyTupleDelete(tuple) && freeable;
         }
         return freeable;

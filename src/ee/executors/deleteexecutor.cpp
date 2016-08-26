@@ -93,9 +93,12 @@ bool DeleteExecutor::p_execute(const NValueArray &params) {
     assert(targetTable);
     TableTuple targetTuple(targetTable->schema());
 
+    std::cout << "DeleteExecutor::p_execute" << std::endl;
+
     int64_t modified_tuples = 0;
 
     if (m_truncate) {
+    	std::cout << "truncating table" << targetTable->name() << std::endl;
         VOLT_TRACE("truncating table %s...", targetTable->name().c_str());
         // count the truncated tuples as deleted
         modified_tuples = targetTable->visibleTupleCount();
@@ -114,7 +117,9 @@ bool DeleteExecutor::p_execute(const NValueArray &params) {
         assert(m_inputTuple.sizeInValues() == m_inputTable->columnCount());
         assert(targetTuple.sizeInValues() == targetTable->columnCount());
         TableIterator inputIterator = m_inputTable->iterator();
+        std::cout << "delete before loop"<< std::endl;
         while (inputIterator.next(m_inputTuple)) {
+        	std::cout << "delete in loop"<< std::endl;
             //
             // OPTIMIZATION: Single-Sited Query Plans
             // If our beloved DeletePlanNode is apart of a single-site query plan,

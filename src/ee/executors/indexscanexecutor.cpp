@@ -163,6 +163,10 @@ bool IndexScanExecutor::p_execute(const NValueArray &params)
     TableIndex *tableIndex = targetTable->index(m_node->getTargetIndexName());
     IndexCursor indexCursor(tableIndex->getTupleSchema());
 
+
+    std::cout << "IndexScanExecutor::p_execute " << m_suspendable << std::endl;
+    std::cout << tableIndex->debug() << std::endl;
+
     TableTuple searchKey(tableIndex->getKeySchema());
     searchKey.moveNoHeader(m_searchKeyBackingStore);
 
@@ -384,11 +388,13 @@ bool IndexScanExecutor::p_execute(const NValueArray &params)
     TableTuple tuple;
     if (!m_suspendable || m_isFirstPass) {
         if (activeNumOfSearchKeys > 0) {
+        	std::cout << "INDEX_LOOKUP_TYPE " << localLookupType << " " << activeNumOfSearchKeys << " " << searchKey.debugNoHeader() << std::endl;
             VOLT_TRACE("INDEX_LOOKUP_TYPE(%d) m_numSearchkeys(%d) key:%s",
                     localLookupType, activeNumOfSearchKeys, searchKey.debugNoHeader().c_str());
 
             if (localLookupType == INDEX_LOOKUP_TYPE_EQ) {
                 tableIndex->moveToKey(&searchKey, indexCursor);
+                std::cout << tableIndex->currentValue(indexCursor).debugNoHeader() << std::endl;
             }
             else if (localLookupType == INDEX_LOOKUP_TYPE_GT) {
                 tableIndex->moveToGreaterThanKey(&searchKey, indexCursor);
@@ -451,6 +457,7 @@ bool IndexScanExecutor::p_execute(const NValueArray &params)
         if (tuple.isPendingDelete()) {
             continue;
         }
+        std::cout << "LOOPING in indexscan: tuple: " << tuple.debugNoHeader() << std::endl;
         VOLT_TRACE("LOOPING in indexscan: tuple: '%s'\n", tuple.debug("tablename").c_str());
 
         pmp.countdownProgress();
@@ -508,6 +515,7 @@ inline bool IndexScanExecutor::getNextTupleInScan(IndexLookupType lookupType,
              IndexCursor* cursor,
              int activeNumOfSearchKeys) {
 	bool success = false;
+	std::cout << "IndexScanExecutor::getNextTupleInScan" << std::endl;
     if (m_suspendable) {
         // read from CoW
         PersistentTable* targetTable = static_cast<PersistentTable*>(m_node->getTargetTable());

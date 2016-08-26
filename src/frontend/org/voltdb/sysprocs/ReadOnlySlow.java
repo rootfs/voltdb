@@ -180,13 +180,15 @@ public class ReadOnlySlow extends VoltSystemProcedure {
                     String indexName = planNode.getString("TARGET_INDEX_NAME");
                     String tableName = planNode.getString("TARGET_TABLE_NAME");
                     int tableId = CatalogUtil.getTableIdFromName(ctx.getDatabase(),tableName);
-                    ctx.activateCopyOnWriteContext(tableId, indexName.getBytes(), TableStreamType.COPY_ON_WRITE_INDEX);
+                    System.out.println("ROSlow activateCopyOnWriteContext Index " + indexName);
+                    ctx.activateCopyOnWriteContext(tableId, indexName, TableStreamType.COPY_ON_WRITE_INDEX);
                 }
                 else if (((String) planNode.getString("PLAN_NODE_TYPE")).equals("SEQSCAN")
                         && planNode.has("SUSPENDABLE") && planNode.getBoolean("SUSPENDABLE")) {
                     String name = planNode.getString("TARGET_TABLE_NAME");
                     int tableId = CatalogUtil.getTableIdFromName(ctx.getDatabase(),name);
-                    ctx.activateCopyOnWriteContext(tableId, "".getBytes(), TableStreamType.COPY_ON_WRITE_SCAN);
+                    System.out.println("ROSlow activateCopyOnWriteContext Scan");
+                    ctx.activateCopyOnWriteContext(tableId, "", TableStreamType.COPY_ON_WRITE_SCAN);
                 }
             }
         } catch (JSONException e) {

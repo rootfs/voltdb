@@ -80,7 +80,6 @@ public:
         , m_searchKeyBackingStore(NULL)
 		, m_suspendable(false)
 		, m_tupleLimitForSuspendableFragments(1)
-		, m_isFirstPass(true)
         , m_aggExec(NULL)
     {}
     ~IndexScanExecutor();
@@ -99,7 +98,7 @@ public:
                                     TableIndex* index,
                                     IndexCursor* cursor,
                                     int activeNumOfSearchKeys) {
-
+    	std::cout << "getNextTuple " << lookupType << std::endl;
         if (lookupType == INDEX_LOOKUP_TYPE_EQ
             || lookupType == INDEX_LOOKUP_TYPE_GEO_CONTAINS) {
             *tuple = index->nextValueAtKey(*cursor);
@@ -152,7 +151,6 @@ private:
 
     bool m_suspendable;
     int m_tupleLimitForSuspendableFragments;
-    bool m_isFirstPass;
 
     AggregateExecutorBase* m_aggExec;
 };

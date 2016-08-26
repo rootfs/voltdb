@@ -87,7 +87,7 @@ IndexCopyOnWriteContext::~IndexCopyOnWriteContext()
 TableStreamerContext::ActivationReturnCode
 IndexCopyOnWriteContext::handleActivation(TableStreamType streamType)
 {
-	//* debug */ std::cout << "IndexCopyOnWriteContext::handleActivation" << std::endl;
+	/* debug */ std::cout << "IndexCopyOnWriteContext::handleActivation" << std::endl;
     if (m_finished && m_tuplesRemaining == 0) {
         return ACTIVATION_FAILED;
     }
@@ -99,7 +99,7 @@ IndexCopyOnWriteContext::handleActivation(TableStreamType streamType)
 
 bool
 IndexCopyOnWriteContext::adjustCursors(int type, IndexCursor *cursor) {
-	//* debug */ std::cout << "IndexCopyOnWriteContext::adjustCursors " << type << std::endl;
+	/* debug */ std::cout << "IndexCopyOnWriteContext::adjustCursors " << type << std::endl;
 	m_indexLookupType = static_cast<IndexLookupType>(type);
 
 	if (m_lastIndexTuple.isNullTuple() && m_lastDeletesTuple.isNullTuple() && cursor != NULL) {
@@ -175,7 +175,7 @@ IndexCopyOnWriteContext::adjustCursors(int type, IndexCursor *cursor) {
  */
 bool IndexCopyOnWriteContext::advanceIterator(TableTuple &tuple) {
 	PersistentTable &table = m_table;
-	//* debug */ std::cout << "advanceIterator remaining " << m_tuplesRemaining << std::endl;
+	/* debug */ std::cout << "advanceIterator remaining " << m_tuplesRemaining << std::endl;
 	//* debug */ std::cout << "INDEX " << m_index.debug() << std::endl;
 	//* debug */ std::cout << "INSERTS " << m_indexInserts->debug() << std::endl;
 	//* debug */ std::cout << "DELETES " << m_indexDeletes->debug() << std::endl;

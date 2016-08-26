@@ -49,6 +49,7 @@ public class AdHoc_RW_SP extends AdHocBase {
                            byte[] partitionParam,
                            byte partitionParamType,
                            byte[] serializedBatchData) {
+    	System.out.println("AdHoc_RW_SP");
         return runAdHoc(ctx, serializedBatchData);
     }
 

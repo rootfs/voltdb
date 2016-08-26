@@ -163,6 +163,9 @@ bool ScanCopyOnWriteContext::cleanup() {
     PersistentTable &table = getTable();
     size_t allPendingCnt = m_surgeon.getSnapshotPendingBlockCount();
     size_t pendingLoadCnt = m_surgeon.getSnapshotPendingLoadBlockCount();
+
+    std::cout << "cleanup" << std::endl;
+
     if (m_tuplesRemaining > 0 || allPendingCnt > 0 || pendingLoadCnt > 0) {
         int32_t skippedDirtyRows = 0;
         int32_t skippedInactiveRows = 0;
@@ -232,6 +235,8 @@ bool ScanCopyOnWriteContext::cleanup() {
 
 bool ScanCopyOnWriteContext::notifyTupleDelete(TableTuple &tuple) {
     assert(m_iterator != NULL);
+
+    std::cout << "notifyTupleDelete" << std::endl;
 
     if (tuple.isDirty() || m_finishedTableScan) {
         return true;

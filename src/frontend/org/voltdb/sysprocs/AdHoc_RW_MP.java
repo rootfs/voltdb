@@ -48,6 +48,7 @@ public class AdHoc_RW_MP extends AdHocBase {
      * @return  results as VoltTable array
      */
     public VoltTable[] run(SystemProcedureExecutionContext ctx, byte[] serializedBatchData) {
+    	System.out.println("AdHoc_RW_MP");
         return runAdHoc(ctx, serializedBatchData);
     }
 

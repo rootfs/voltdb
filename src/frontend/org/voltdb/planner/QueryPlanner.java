@@ -521,7 +521,7 @@ public class QueryPlanner {
         ArrayList<AbstractPlanNode> scanNodes = root.findAllNodesOfType(PlanNodeType.INDEXSCAN);
         for (AbstractPlanNode node : scanNodes) {
             if (node.getParentCount() == 0) {
-                ((SeqScanPlanNode)node).setPausable(true, m_cluster.getLongreadstuplecount());
+                ((IndexScanPlanNode)node).setPausable(true, m_cluster.getLongreadstuplecount());
             }
         }
     }

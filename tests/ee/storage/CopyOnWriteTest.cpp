@@ -478,7 +478,7 @@ public:
 	    int count = 0;
 	    TableTuple tuple;
     	if (streamType == TABLE_STREAM_COPY_ON_WRITE_INDEX) {
-    		m_table->adjustCursors(indexLookupType);
+    		m_table->adjustCursors(indexLookupType, NULL);
     	}
 	    while(m_table->advanceCOWIterator(tuple))
 	    {
@@ -509,7 +509,7 @@ public:
             bool done = false;
             while (!done) {
             	if (streamType == TABLE_STREAM_COPY_ON_WRITE_INDEX) {
-            		m_table->adjustCursors(indexLookupType);
+            		m_table->adjustCursors(indexLookupType, NULL);
             	}
                 for (int i = 0; i < NUM_COW_TUPLE_SCAN; i++) {
                     TableTuple tuple(m_table->schema());
@@ -1796,7 +1796,7 @@ public:
 
     virtual bool cleanupTuple(TableTuple &tuple, bool deleteTuple) { return false; }
 
-    virtual bool adjustCursors(int type) { return false; }
+    virtual bool adjustCursors(int type, IndexCursor *cursor) { return false; }
 
     virtual bool notifyTupleInsert(TableTuple &tuple) { return false; }
 

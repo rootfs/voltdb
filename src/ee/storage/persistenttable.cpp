@@ -876,6 +876,7 @@ void PersistentTable::updateTupleForUndo(char* tupleWithUnwantedValues,
 }
 
 void PersistentTable::deleteTuple(TableTuple &target, bool fallible) {
+	std::cout << "PersistentTable::deleteTuple" << std::endl;
     // May not delete an already deleted tuple.
     assert(target.isActive());
 
@@ -947,6 +948,7 @@ void PersistentTable::deleteTupleFinalize(TableTuple &target) {
     // A snapshot (background scan) in progress can still cause a hold-up.
     // notifyTupleDelete() defaults to returning true for all context types
     // other than CopyOnWriteContext.
+	std::cout << "PersistentTable::deleteTupleFinalize" << std::endl;
     if (   (m_tableStreamer != NULL
         && ! m_tableStreamer->notifyTupleDelete(target))) {
         // Mark it pending delete and let the snapshot land the finishing blow.
@@ -1286,6 +1288,7 @@ bool PersistentTable::activateCopyOnWriteContext(
 }
 
 void PersistentTable::deactivateCopyOnWriteContext(TableStreamType cowType) {
+	std::cout << "deactivate CoW " << cowType << std::endl;
     m_tableStreamer->deactivateStream(cowType);
 }
 
