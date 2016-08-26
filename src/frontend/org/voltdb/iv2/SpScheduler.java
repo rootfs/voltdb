@@ -996,8 +996,24 @@ public class SpScheduler extends Scheduler implements SnapshotCompletionInterest
         } else {
             // No k-safety means no replica: read/write queries on master.
             // K-safety: read-only queries (on master) or write queries (on replica).
-            if (txn != null && txn.isDone() && !txn.isReadOnly()) {
-                setRepairLogTruncationHandle(txn.m_spHandle);
+            if (txn == null) {
+                // this is one-shot read that should be released only when previous writes are all acked
+                if (m_defaultConsistencyReadLevel == ReadLevel.SAFE) {
+                    m_bufferedReadLog.offer(m_mailbox, message, m_repairLogTruncationHandle);
+                    return;
+                }
+            } else {
+                if (txn.isReadOnly()) {
+                    // non early flush read MP
+                    if (m_defaultConsistencyReadLevel == ReadLevel.SAFE) {
+                        m_bufferedReadLog.offer(m_mailbox, message, m_repairLogTruncationHandle);
+                        return;
+                    }
+                } else if (txn.isDone()) {
+                    // when write transaction is done
+                    setRepairLogTruncationHandle(txn.m_spHandle);
+                }
+
             }
         }
 
