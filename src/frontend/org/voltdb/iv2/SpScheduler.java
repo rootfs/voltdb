@@ -993,16 +993,10 @@ public class SpScheduler extends Scheduler implements SnapshotCompletionInterest
             }
             // doing duplicate suppresion: all done.
             return;
-        } else if (txn != null) {
-            if (txn.isReadOnly()) {
-                assert(m_isLeader);
-                // FragmentResponse on SPI if without k-safety, or on replica with k-safety
-                assert(m_bufferedReadLog != null);
-                if (m_defaultConsistencyReadLevel == ReadLevel.SAFE) {
-                    m_bufferedReadLog.offer(m_mailbox, message, m_repairLogTruncationHandle);
-                    return;
-                }
-            } else if (txn.isDone()) {
+        } else {
+            // No k-safety means no replica: read/write queries on master.
+            // K-safety: read-only queries (on master) or write queries (on replica).
+            if (txn != null && txn.isDone() && !txn.isReadOnly()) {
                 setRepairLogTruncationHandle(txn.m_spHandle);
             }
         }
